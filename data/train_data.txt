@@ -1,0 +1,10 @@
+Declare a variable W to be 43 
+Declare a variable w to be -49 
+Declare a variable e to be 32 
+Declare a variable t to be 45 
+Declare a variable Q to be -43 
+Declare a variable m to be -48 
+Declare a variable U to be 8 
+Declare a variable J to be 11 
+Declare a variable X to be -44 
+Declare a variable i to be -27 
