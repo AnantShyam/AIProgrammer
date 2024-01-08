@@ -4,6 +4,29 @@ import string
 import model
 
 
+def convert_dataset(data):
+    """
+    Converts a dataset of form ['Word1, ... WordN', .... 'Word1, ... WordN']
+    to [['Word1', ... 'WordN'], ... ['Word1', ... WordN']]
+    :param data:
+    :return: List(List(String))
+    """
+    assert type(data) == list
+    train = []
+    for example in data:
+        words, word = [], ""
+        for i in example:
+            if i == " ":
+                words.append(word)
+                word = ""
+            else:
+                word = word + i
+        if word != "":
+            words.append(word)
+        train.append(words)
+    return train
+
+
 def generate_training_dataset():
     num_epochs = 256
     command_starts = ["Declare a variable"]
@@ -26,4 +49,4 @@ if __name__ == "__main__":
     # generate_training_dataset()
     ds = dataset.Dataset()
     md = model.Model(ds)
-
+    md.train_model()

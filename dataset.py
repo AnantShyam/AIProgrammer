@@ -2,12 +2,15 @@ import random
 import string
 import torch
 from torch.utils.data import DataLoader
+import main
+
 
 class Dataset:
 
     def __init__(self):
         self.train_dataset = self.build_training_dataset()
         self.train_dataloader = DataLoader(self.train_dataset, batch_size=32, shuffle=True)
+
 
     def build_training_dataset(self):
         train_dataset = []
@@ -20,8 +23,5 @@ class Dataset:
                     answers.append(answer[:-1]) # remove newline character
                 for i in range(len(queries)):
                     train_dataset.append(f"START {queries[i]} {answers[i]} END")
-        return train_dataset
 
-
-
-
+        return main.convert_dataset(train_dataset)
