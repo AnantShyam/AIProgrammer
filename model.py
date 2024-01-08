@@ -19,6 +19,7 @@ class Model(torch.nn.Module):
         for word in word_vocab:
             self.word_trained_embeddings[word] = self.embeddings.wv[word]
 
+        self.model = torch.nn.RNN(20, 20) # random initialization of RNN
         self.optimizer = torch.optim.SGD(self.parameters(), lr=0.001)
 
 
@@ -26,15 +27,19 @@ class Model(torch.nn.Module):
         converted_sentence = main.convert_dataset([test_sentence])[0]
         n = len(converted_sentence)
 
-        embedded_sentence = torch.empty(n)
+        embedded_sentence = []
         for i in range(n):
             word = converted_sentence[i]
             embedding = None
             if word in self.word_trained_embeddings:
-                embedding = None
+                embedding = self.word_trained_embeddings[word]
+            else:
+                embedding = torch.rand(self.max_len)
+            embedding = torch.from_numpy(embedding)
+            embedded_sentence.append(embedding)
 
-        # finish implementing this method
-        pass
+        sentence = torch.cat(tuple([i for i in embedded_sentence]), 0)
+        return sentence
 
 
 

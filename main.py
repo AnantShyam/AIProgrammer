@@ -49,4 +49,5 @@ if __name__ == "__main__":
     # generate_training_dataset()
     ds = dataset.Dataset()
     md = model.Model(ds)
+    print(md.interpret_user_input('Declare a variable l to be 27'))
     md.train_model()
