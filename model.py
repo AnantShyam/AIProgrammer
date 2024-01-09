@@ -51,12 +51,13 @@ class Model(torch.nn.Module):
             self.word_trained_embeddings[word] = new_word_embedding
 
         # print(self.word_trained_embeddings)
-        self.prepare_rnn_model_inputs()
+        # self.prepare_rnn_model_inputs()
 
         self.num_layers = 10  # can change this if needed
         self.hidden_size = len(self.word_vocab) # can change this if needed
 
         self.train_data, self.initial_hidden_state = self.prepare_rnn_model_inputs()
+        print(self.train_data.shape)
         self.train_dataloader = DataLoader(self.train_data, batch_size=32, shuffle=True)
 
         self.rnn = torch.nn.RNN(input_size=30, hidden_size=self.hidden_size) # random initialization of RNN
@@ -94,7 +95,6 @@ class Model(torch.nn.Module):
             sentence_embedding = np.array(sentence_embedding)
             train_data_embeddings.append(sentence_embedding)
         train_data_embeddings = torch.from_numpy(np.array(train_data_embeddings))
-
         h_0 = torch.rand((self.num_layers, self.hidden_size))
         return train_data_embeddings, h_0
 
@@ -105,9 +105,14 @@ class Model(torch.nn.Module):
 
 
     def train_model(self):
+
         num_epochs = 100
         for _ in tqdm(range(num_epochs)):
-            pass
+            self.train()
+            num_sentences = len(self.sentences) # not doing minibatching for right now
+            for i in range(num_sentences):
+                sentence = self.train_data[i].reshape(())
+        pass
 
 
     def test_model(self):
