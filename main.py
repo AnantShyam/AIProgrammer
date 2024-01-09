@@ -23,8 +23,9 @@ if __name__ == "__main__":
 
     user_input = arguments.command
 
-    output, _ = md.forward(user_input)
+    # output, _ = md.forward(user_input)
     # print(output)
     # print(output.shape)
     # print(md.interpret_user_input('Declare a variable l to be 27'))
-    md.train_model()
+
+    # md.train_model()
