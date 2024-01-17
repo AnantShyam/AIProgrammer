@@ -24,7 +24,7 @@ class Model(torch.nn.Module):
                 if word.isnumeric():
                     self.sentences[i][j] = 'Integer'
 
-        # self.max_len = max([len(sentence) for sentence in self.sentences])
+        print(self.sentences)
 
         self.embedding_size = 30  # can change this if needed
         self.embeddings = gensim.models.Word2Vec(self.sentences, min_count=1, vector_size=self.embedding_size)
@@ -51,19 +51,23 @@ class Model(torch.nn.Module):
             self.word_trained_embeddings[word] = new_word_embedding
 
         # print(self.word_trained_embeddings)
-        # self.prepare_rnn_model_inputs()
 
         self.num_layers = 10  # can change this if needed
         self.hidden_size = len(self.word_vocab) # can change this if needed
 
         self.train_data, self.initial_hidden_state = self.prepare_rnn_model_inputs()
-        print(self.train_data.shape)
         self.train_dataloader = DataLoader(self.train_data, batch_size=32, shuffle=True)
 
         self.rnn = torch.nn.RNN(input_size=30, hidden_size=self.hidden_size) # random initialization of RNN
-        self.loss_function = torch.nn.CrossEntropyLoss()
+
+
+
+        self.loss_function = torch.nn.MSELoss()
+
+        self.activation = torch.nn.Softmax()
         self.optimizer = torch.optim.SGD(self.parameters(), lr=0.001)
 
+        self.train_model()
 
     def interpret_user_input(self, test_sentence):
         converted_sentence = self.data.convert_dataset([test_sentence])[0]
@@ -76,7 +80,7 @@ class Model(torch.nn.Module):
             if word in self.word_trained_embeddings:
                 embedding = self.word_trained_embeddings[word]
             else:
-                embedding = torch.rand(self.max_len)
+                embedding = torch.rand(self.max_len) # should this self.word_embedding_size here?
             embedding = torch.from_numpy(embedding)
             embedded_sentence.append(embedding)
 
@@ -100,20 +104,39 @@ class Model(torch.nn.Module):
 
 
     def forward(self, data):
-        data = self.interpret_user_input(data)
-        return self.rnn(data)
+        output, _ = self.rnn(data)
+        return self.activation(output)
+
+
+    def build_MLP(self, input_size):
+        model = torch.nn.Sequential(
+            torch.nn.Linear(input_size, 1000),
+            torch.nn.ReLU(),
+            torch.nn.Linear(1000, len(self.word_vocab)),
+            torch.nn.Softmax()
+        )
+        return model
 
 
     def train_model(self):
 
-        num_epochs = 100
+        num_epochs = 1
         for _ in tqdm(range(num_epochs)):
             self.train()
-            num_sentences = len(self.sentences) # not doing minibatching for right now
+            num_sentences = len(self.train_data) # not doing minibatching for right now
+            num_sentences = 1
             for i in range(num_sentences):
-                sentence = self.train_data[i].reshape(())
+                sentence = self.train_data[i]
+                n_sentences, sentence_length = sentence.shape
+
+                # reshape into 1d tensor
+                concatenated_sentence = torch.reshape(sentence, (n_sentences * sentence_length, ))
+                # model_output = self.forward(concatenated_sentence)
+
+                # prediction = torch.argmax(self.forward(sentence)).item()
+
+                self.optimizer.zero_grad()
+                # insert code for doing backpropagation on the loss
+                self.optimizer.step()
         pass
 
-
-    def test_model(self):
-        pass
