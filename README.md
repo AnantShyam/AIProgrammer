@@ -3,4 +3,7 @@ In this repository, we have our code for this model.
 
 To run the model, you can clone this repository, install the necessary packages, and run:
 
-python main.py "Your Command Here"
+```python
+command = "Your Command Here"
+python main.py command
+```
